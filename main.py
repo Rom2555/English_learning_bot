@@ -15,21 +15,30 @@ bot = telebot.TeleBot(token)
 @bot.message_handler(commands=['start'])
 def start_command(message):
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    item1 = types.KeyboardButton("Кнопка_1")
-    item2 = types.KeyboardButton("Кнопка_2")
-    item3 = types.KeyboardButton("Кнопка_3")
+
+    item1 = types.KeyboardButton("добавить слово 💬")
+    item2 = types.KeyboardButton("удалить слово 🗑️")
+    item3 = types.KeyboardButton("Дальше ⏭")
 
     markup.add(item1, item2, item3)
-    bot.send_message(message.chat.id, 'Привет! Нажми на любую кнопку', reply_markup=markup)
+    bot.send_message(message.chat.id, 'Привет 🌟 Давай попрактикуемся в английском языке! '
+                                      'Ты можешь тренироваться в удобном для себя темпе 🚀. '
+                                      'Используй тренажёр как конструктор — '
+                                      'создавай свою собственную базу слов 🧩! '
+                                      'Для этого используй инструменты: '
+                                      'добавить слово 💬, '
+                                      'удалить слово 🗑️. '
+                                      'Готов? Тогда вперёд — начнём прямо сейчас! 💪🔥',
+                     reply_markup=markup)
 
 
 @bot.message_handler(content_types=['text'])
 def message_reply(message):
-    if message.text == "Кнопка_1":
+    if message.text == "добавить слово 💬":
         bot.send_message(message.chat.id, "Была нажата кнопка_1")
-    elif message.text == "Кнопка_2":
+    elif message.text == "удалить слово 🗑️":
         bot.send_message(message.chat.id, "Была нажата кнопка_2")
-    elif message.text == "Кнопка_3":
+    elif message.text == "Дальше ⏭":
         bot.send_message(message.chat.id, "Была нажата кнопка_3")
 
 
