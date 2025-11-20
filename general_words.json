@@ -1,0 +1,16 @@
+[
+  {"word": "красный", "translation": "red"},
+  {"word": "синий", "translation": "blue"},
+  {"word": "я", "translation": "I"},
+  {"word": "ты", "translation": "you"},
+  {"word": "он", "translation": "he"},
+  {"word": "она", "translation": "she"},
+  {"word": "мы", "translation": "we"},
+  {"word": "они", "translation": "they"},
+  {"word": "здесь", "translation": "here"},
+  {"word": "там", "translation": "there"},
+  {"word": "город", "translation": "city"},
+  {"word": "мир", "translation": "world"},
+  {"word": "дом", "translation": "house"},
+  {"word": "кошка", "translation": "cat"}
+]
