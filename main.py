@@ -1,8 +1,15 @@
 """English Learning Bot (NetologyFirst)"""
 
 import telebot
-from config import TOKEN
+import os
+from dotenv import load_dotenv
 from database import init_db
+
+# Загружаем .env
+load_dotenv()
+
+# Получаем токен из .env
+TOKEN = os.getenv("TOKEN")
 
 if __name__ == '__main__':
     try:
