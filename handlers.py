@@ -23,7 +23,7 @@ def setup_handlers(bot):
     @bot.message_handler(content_types=['text'])
     def message_reply(message):
         user_id = message.chat.id
-        text = message.text.strip()
+        text = message.text.strip().lower()
         state = user_states.get(user_id, {}).get('mode', 'menu')
         if state == 'menu':
 
