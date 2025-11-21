@@ -1,13 +1,14 @@
 from telebot import types
 from keyboards import get_main_menu, get_words_keyboard
-from words import get_user_words, delete_word
+from words import get_user_words, delete_word, add_word
 
 
 def setup_handlers(bot):
+    # состояние пользователя: user_id ---> словарь {mode: '...', data: {...}}
     user_states = {}
 
     @bot.message_handler(commands=['start'])
-    def start_command(message):
+    def start(message):
         user_states[message.chat.id] = {'mode': 'menu'}
         bot.send_message(
             message.chat.id,
@@ -19,51 +20,53 @@ def setup_handlers(bot):
             'добавить слово 💬, '
             'удалить слово 🗑️. '
             'Готов? Тогда вперёд — начнём прямо сейчас! 💪🔥',
-            reply_markup=get_main_menu()  # кнопки внизу
+            reply_markup=get_main_menu() # кнопки внизу
         )
 
     @bot.message_handler(content_types=['text'])
-    def message_reply(message):
+    def reply(message):
         user_id = message.chat.id
-        text = message.text.strip().lower()
-        state = user_states.get(user_id, {}).get('mode', 'menu')  # узнаем в каком процессе находится пользователь,
-        # если нет, то по умолчанию menu
+        text = message.text.strip()
+        state = user_states.get(user_id, {}).get('mode', 'menu')
+
+        # --- Главное меню ---
         if state == 'menu':
+            if text == 'добавить слово 💬':
+                user_states[user_id] = {'mode': 'wait_russian'}
+                bot.send_message(user_id, "Напиши слово на русском:")
 
-            if text == 'Дальше ⏭':
-                pass
-
-            elif text == 'добавить слово 💬':
-                user_states[user_id]['mode'] = 'adding_word'
-                bot.send_message(user_id, "Напиши новое слово на русском:")
-                # добавление слова
-
-            elif text == "удалить слово 🗑️":
+            elif text == 'удалить слово 🗑️':
                 words = get_user_words(user_id)
                 if not words:
-                    bot.send_message(user_id, "У вас нет добавленных слов")
-                    return
-                bot.send_message(user_id, "Какое слово хотите удалить?", reply_markup=get_words_keyboard(words))
-                user_states[user_id] = {'mode': 'deleting_word'}
+                    bot.send_message(user_id, "У вас нет слов для удаления")
+                else:
+                    bot.send_message(user_id, "Выберите слово для удаления:", reply_markup=get_words_keyboard(words))
+                    user_states[user_id] = {'mode': 'delete_word'}
 
+            elif text == 'Дальше ⏭':
+                bot.send_message(user_id, ".............", reply_markup=get_main_menu())
 
-        elif state == 'adding_word':
-            # тут добавление слова в базу
-            bot.send_message(user_id, f"Слово '{text}' добавлено!")
-            user_states[user_id]['mode'] = 'menu'
-            bot.send_message(user_id, "Что дальше?", reply_markup=get_main_menu())
+        # --- Ждём русское слово ---
+        elif state == 'wait_russian':
+            user_states[user_id] = {'mode': 'wait_english', 'russian': text}
+            bot.send_message(user_id, f"Теперь введите перевод слова '{text}' на английском:")
 
-        elif state == 'deleting_word':
-            handle_deleting_word(user_id, text)
-            bot.send_message(user_id, f"Слово '{text}' удалено!")
-            user_states[user_id]['mode'] = 'menu'
-            bot.send_message(user_id, "Что дальше?", reply_markup=get_main_menu())
+        # --- Ждём английское слово ---
+        elif state == 'wait_english':
+            russian = user_states[user_id].get('russian')
+            add_word(user_id, russian, text)
+            bot.send_message(
+                user_id,
+                f"Слово '{russian} - {text}' добавлено в ваш словарь!",
+                reply_markup=get_main_menu()
+            )
+            user_states[user_id] = {'mode': 'menu'}  # возврат в меню
 
-    def handle_deleting_word(user_id, text):
-        if text == "Отмена":
-            bot.send_message(user_id, "Удаление отменено", reply_markup=get_main_menu())
-            user_states[user_id] = {'mode': 'menu'}
-        else:
-            delete_word(user_id, text)
-            bot.send_message(user_id, f"Слово '{text}' удалено", reply_markup=get_main_menu())
+        # --- Удаление слова ---
+        elif state == 'delete_word':
+            if text == "Отмена":
+                bot.send_message(user_id, "Удаление отменено", reply_markup=get_main_menu())
+            else:
+                delete_word(user_id, text)
+                bot.send_message(user_id, f"Слово '{text}' удалено", reply_markup=get_main_menu())
             user_states[user_id] = {'mode': 'menu'}
