@@ -9,14 +9,7 @@ def get_practice_data(user_id):
 
     russian, correct = random.choice(words)
     all_translations = [trans for _, trans in words]
-
-    # Проблема: get_general_words() может возвращать dict или list
-    general_words = get_general_words()
-    if hasattr(general_words, 'values'):  # Проверяем, словарь ли это
-        all_translations += list(general_words.values())
-    else:
-        # Предполагаем, что это список вида [('cat', 'кот'), ...]
-        all_translations += [pair[1] for pair in general_words]
+    all_translations += [pair[1] for pair in get_general_words()]
 
     choices = list(set([correct] + random.sample(all_translations, min(3, len(all_translations)))))
     random.shuffle(choices)

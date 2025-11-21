@@ -84,9 +84,9 @@ def setup_handlers(bot):
         # --- Режим практика ---
         elif state == 'practice':
             correct = user_states[user_id].get('correct')
-            print(correct)
+            # print(correct)
             word = user_states[user_id].get('word')
-            print(word)
+            # print(word)
 
             if text == "Меню":
                 bot.send_message(user_id, "Вы вышли из режима практики.", reply_markup=get_main_menu())
@@ -95,13 +95,13 @@ def setup_handlers(bot):
                 if text.lower() == correct.lower():
                     bot.send_message(
                         user_id,
-                        f"Правильно! *{word}* — это *{correct}*",
+                        f"Правильно! '{word}' — это '{correct}'",
                         reply_markup=get_main_menu()
                     )
                 else:
                     bot.send_message(
                         user_id,
-                        f"Неправильно! *{word}* — это *{correct}*",
+                        f"Неправильно! '{word}' — это '{correct}'",
                         reply_markup=get_main_menu()
                     )
                 user_states[user_id] = {'mode': 'menu'}
