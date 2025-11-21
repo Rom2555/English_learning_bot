@@ -39,7 +39,7 @@ def setup_handlers(bot):
             elif text == 'Удалить слово':
                 words = get_user_words(user_id)
                 if not words:
-                    bot.send_message(user_id, "У вас нет слов для удаления")
+                    bot.send_message(user_id, "У вас нет добавленных слов для удаления")
                 else:
                     bot.send_message(user_id, "Выберите слово для удаления:", reply_markup=get_words_keyboard(words))
                     user_states[user_id] = {'mode': 'delete_word'}
