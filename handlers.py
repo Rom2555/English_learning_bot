@@ -21,7 +21,7 @@ def setup_handlers(bot):
             'добавить слово 💬, '
             'удалить слово 🗑️. '
             'Готов? Тогда вперёд — начнём прямо сейчас! 💪🔥',
-            reply_markup=get_main_menu() # кнопки внизу
+            reply_markup=get_main_menu()  # кнопки внизу
         )
 
     @bot.message_handler(content_types=['text'])
@@ -92,7 +92,12 @@ def setup_handlers(bot):
                 bot.send_message(user_id, "Вы вышли из режима практики.", reply_markup=get_main_menu())
                 user_states[user_id] = {'mode': 'menu'}
             else:
-                if text.lower() == correct.lower():
+
+                is_correct = (text.lower() == correct.lower())
+                # Сохраняем результат
+                save_result(user_id, word, is_correct)
+
+                if is_correct:
                     save_result(user_id, word, True)
                     bot.send_message(
                         user_id,
