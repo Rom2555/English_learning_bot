@@ -11,8 +11,14 @@ def get_practice_data(user_id):
     all_translations = [trans for _, trans in words]
     all_translations += [pair[1] for pair in get_general_words()]
 
-    choices = list(set([correct] + random.sample(all_translations, min(3, len(all_translations)))))
+    # Убираем правильный перевод из общего списка, чтобы не было дубликатов при выборе
+    wrong_choices = set([trans for trans in all_translations if trans != correct])
+
+    # Выбираем 3 уникальных неправильных варианта
+    choices = random.sample(list(wrong_choices), 3)
+    choices.append(correct)
     random.shuffle(choices)
+
     return russian, correct, choices
 
 def save_result(user_id, word, correct):
