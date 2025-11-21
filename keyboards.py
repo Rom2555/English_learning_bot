@@ -2,7 +2,7 @@ from telebot import types
 
 def get_main_menu():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    markup.add("добавить слово 💬", "удалить слово 🗑️", "Дальше ⏭")
+    markup.add("Добавить слово", "Удалить слово", "Практика")
     return markup
 
 def get_words_keyboard(words):

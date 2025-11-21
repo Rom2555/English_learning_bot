@@ -18,8 +18,8 @@ def setup_handlers(bot):
             'Используй тренажёр как конструктор — '
             'создавай свою собственную базу слов 🧩! '
             'Для этого используй инструменты: '
-            'добавить слово 💬, '
-            'удалить слово 🗑️. '
+            'Добавить слово, '
+            'Удалить слово. '
             'Готов? Тогда вперёд — начнём прямо сейчас! 💪🔥',
             reply_markup=get_main_menu()  # кнопки внизу
         )
@@ -32,11 +32,11 @@ def setup_handlers(bot):
 
         # --- Главное меню ---
         if state == 'menu':
-            if text == 'добавить слово 💬':
+            if text == 'Добавить слово':
                 user_states[user_id] = {'mode': 'wait_russian'}
                 bot.send_message(user_id, "Напиши слово на русском:")
 
-            elif text == 'удалить слово 🗑️':
+            elif text == 'Удалить слово':
                 words = get_user_words(user_id)
                 if not words:
                     bot.send_message(user_id, "У вас нет слов для удаления")
@@ -44,7 +44,7 @@ def setup_handlers(bot):
                     bot.send_message(user_id, "Выберите слово для удаления:", reply_markup=get_words_keyboard(words))
                     user_states[user_id] = {'mode': 'delete_word'}
 
-            elif text == 'Дальше ⏭':
+            elif text == 'Практика':
                 russian, correct, choices = get_practice_data(user_id)
                 if not russian or not correct or not choices:
                     bot.send_message(user_id, "Нет слов для практики")
@@ -66,8 +66,9 @@ def setup_handlers(bot):
             russian = user_states[user_id].get('russian')
             add_word(user_id, russian, text)
 
-            # Получаем обновлённое количество слов пользователля
+            # Получаем обновлённое количество добавленных слов
             user_word_count = len(get_user_words(user_id))
+            # Получаем обновлённое количество всех слов
             all_word_count = len(get_all_words(user_id))
 
             bot.send_message(
