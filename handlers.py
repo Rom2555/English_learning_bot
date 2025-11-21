@@ -1,4 +1,3 @@
-from telebot import types
 from keyboards import get_main_menu, get_practice_keyboard, get_cancel_keyboard
 from practice import get_practice_data, save_result
 from words import get_user_words, delete_word, add_word, get_all_words
@@ -148,7 +147,11 @@ def setup_handlers(bot):
             word = user_states[user_id].get('word')
 
             if text == "Меню":
-                bot.send_message(user_id, "Вы вышли из режима практики.", reply_markup=get_main_menu())
+                bot.send_message(
+                    user_id,
+                    "Вы вышли из режима практики.",
+                    reply_markup=get_main_menu()
+                )
                 user_states[user_id] = {'mode': 'menu'}
             else:
                 is_correct = (text.lower() == correct.lower())
