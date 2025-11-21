@@ -4,3 +4,9 @@ def get_main_menu():
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     markup.add("добавить слово 💬", "удалить слово 🗑️", "Дальше ⏭")
     return markup
+
+def get_words_keyboard(words):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    markup.add(*[types.KeyboardButton(word) for word, _ in words])
+    markup.add("Отмена")
+    return markup
