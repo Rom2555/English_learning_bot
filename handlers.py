@@ -1,6 +1,6 @@
 from telebot import types
 from keyboards import get_main_menu, get_words_keyboard, get_practice_keyboard
-from practice import get_practice_data
+from practice import get_practice_data, save_result
 from words import get_user_words, delete_word, add_word
 
 
@@ -93,6 +93,7 @@ def setup_handlers(bot):
                 user_states[user_id] = {'mode': 'menu'}
             else:
                 if text.lower() == correct.lower():
+                    save_result(user_id, word, True)
                     bot.send_message(
                         user_id,
                         f"Правильно! '{word}' — это '{correct}'",
