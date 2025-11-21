@@ -1,7 +1,7 @@
 from telebot import types
 from keyboards import get_main_menu, get_words_keyboard, get_practice_keyboard
 from practice import get_practice_data, save_result
-from words import get_user_words, delete_word, add_word
+from words import get_user_words, delete_word, add_word, get_all_words
 
 
 def setup_handlers(bot):
@@ -65,9 +65,16 @@ def setup_handlers(bot):
         elif state == 'wait_english':
             russian = user_states[user_id].get('russian')
             add_word(user_id, russian, text)
+
+            # Получаем обновлённое количество слов пользователля
+            user_word_count = len(get_user_words(user_id))
+            all_word_count = len(get_all_words(user_id))
+
             bot.send_message(
                 user_id,
-                f"Слово '{russian} - {text}' добавлено в ваш словарь!",
+                f"Слово '{russian} - {text}' добавлено в ваш словарь!\n"
+                f"Сейчас вы изучаете {user_word_count} новых слов(а).\n"
+                f"Всего вы изучаете {all_word_count} слов(а).",
                 reply_markup=get_main_menu()
             )
             user_states[user_id] = {'mode': 'menu'}  # возврат в меню
