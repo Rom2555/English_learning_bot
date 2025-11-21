@@ -1,5 +1,6 @@
 from telebot import types
-from keyboards import get_main_menu, get_words_keyboard
+from keyboards import get_main_menu, get_words_keyboard, get_practice_keyboard
+from practice import get_practice_data
 from words import get_user_words, delete_word, add_word
 
 
@@ -44,7 +45,16 @@ def setup_handlers(bot):
                     user_states[user_id] = {'mode': 'delete_word'}
 
             elif text == 'Дальше ⏭':
-                bot.send_message(user_id, ".............", reply_markup=get_main_menu())
+                russian, correct, choices = get_practice_data(user_id)
+                if not russian or not correct or not choices:
+                    bot.send_message(user_id, "Нет слов для практики")
+                    return
+                bot.send_message(
+                    user_id,
+                    f"Как переводится слово: {russian}?",
+                    reply_markup=get_practice_keyboard(choices)
+                )
+                user_states[user_id] = {'mode': 'practice', 'correct': correct, 'word': russian}
 
         # --- Ждём русское слово ---
         elif state == 'wait_russian':
@@ -70,3 +80,28 @@ def setup_handlers(bot):
                 delete_word(user_id, text)
                 bot.send_message(user_id, f"Слово '{text}' удалено", reply_markup=get_main_menu())
             user_states[user_id] = {'mode': 'menu'}
+
+        # --- Режим практика ---
+        elif state == 'practice':
+            correct = user_states[user_id].get('correct')
+            print(correct)
+            word = user_states[user_id].get('word')
+            print(word)
+
+            if text == "Меню":
+                bot.send_message(user_id, "Вы вышли из режима практики.", reply_markup=get_main_menu())
+                user_states[user_id] = {'mode': 'menu'}
+            else:
+                if text.lower() == correct.lower():
+                    bot.send_message(
+                        user_id,
+                        f"Правильно! *{word}* — это *{correct}*",
+                        reply_markup=get_main_menu()
+                    )
+                else:
+                    bot.send_message(
+                        user_id,
+                        f"Неправильно! *{word}* — это *{correct}*",
+                        reply_markup=get_main_menu()
+                    )
+                user_states[user_id] = {'mode': 'menu'}
