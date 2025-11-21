@@ -134,11 +134,12 @@ def setup_handlers(bot):
                         f"Слово '{text}' удалено из вашего словаря.",
                         reply_markup=get_main_menu()
                     )
+                    user_states[user_id] = {'mode': 'menu'}
                 else:
                     bot.send_message(
                         user_id,
                         f"Слово '{text}' не найдено в вашем словаре. Попробуйте ещё раз или нажмите 'Отмена'",
-                        reply_markup=get_cancel_keyboard()    
+                        reply_markup=get_cancel_keyboard()
                     )
 
         # --- Режим практика ---
