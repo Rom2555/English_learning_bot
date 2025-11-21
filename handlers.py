@@ -39,15 +39,18 @@ def setup_handlers(bot):
             elif text == 'Удалить слово':
                 words = get_user_words(user_id)
                 if not words:
-                    bot.send_message(user_id, "У вас нет добавленных слов для удаления")
+                    bot.send_message(user_id, "У вас нет добавленных слов для удаления", reply_markup=get_main_menu())
                 else:
-                    bot.send_message(user_id, "Выберите слово для удаления:", reply_markup=get_words_keyboard(words))
+                    bot.send_message(
+                        user_id,
+                        "Введите слово на русском языке, которое хотите удалить, или нажмите 'Отмена':"
+                    )
                     user_states[user_id] = {'mode': 'delete_word'}
 
             elif text == 'Практика':
                 russian, correct, choices = get_practice_data(user_id)
                 if not russian or not correct or not choices:
-                    bot.send_message(user_id, "Нет слов для практики")
+                    bot.send_message(user_id, "Нет слов для практики", reply_markup=get_main_menu())
                     return
                 bot.send_message(
                     user_id,
@@ -84,29 +87,31 @@ def setup_handlers(bot):
         elif state == 'delete_word':
             if text == "Отмена":
                 bot.send_message(user_id, "Удаление отменено", reply_markup=get_main_menu())
+                user_states[user_id] = {'mode': 'menu'}
             else:
-                delete_word(user_id, text)
-                bot.send_message(user_id, f"Слово '{text}' удалено", reply_markup=get_main_menu())
-            user_states[user_id] = {'mode': 'menu'}
+                words = get_user_words(user_id)
+                if any(word[0] == text for word in words):  # word[0] — русское слово
+                    delete_word(user_id, text)
+                    bot.send_message(user_id, f"Слово '{text}' удалено из вашего словаря.", reply_markup=get_main_menu())
+                else:
+                    bot.send_message(
+                        user_id,
+                        f"Слово '{text}' не найдено в вашем словаре. Попробуйте ещё раз или нажмите 'Отмена'."
+                    )
 
         # --- Режим практика ---
         elif state == 'practice':
             correct = user_states[user_id].get('correct')
-            # print(correct)
             word = user_states[user_id].get('word')
-            # print(word)
 
             if text == "Меню":
                 bot.send_message(user_id, "Вы вышли из режима практики.", reply_markup=get_main_menu())
                 user_states[user_id] = {'mode': 'menu'}
             else:
-
                 is_correct = (text.lower() == correct.lower())
-                # Сохраняем результат
                 save_result(user_id, word, is_correct)
 
                 if is_correct:
-                    save_result(user_id, word, True)
                     bot.send_message(
                         user_id,
                         f"Правильно! '{word}' — это '{correct}'",
