@@ -24,7 +24,8 @@ def setup_handlers(bot):
     def message_reply(message):
         user_id = message.chat.id
         text = message.text.strip().lower()
-        state = user_states.get(user_id, {}).get('mode', 'menu')
+        state = user_states.get(user_id, {}).get('mode', 'menu') # узнаем в каком процессе находится пользователь,
+        # если нет, то по умолчанию menu
         if state == 'menu':
 
             if text == 'Дальше ⏭':
