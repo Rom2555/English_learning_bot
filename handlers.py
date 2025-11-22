@@ -47,6 +47,7 @@ def setup_handlers(bot):
                         "У вас нет добавленных слов для удаления",
                         reply_markup=get_main_menu()
                     )
+                    user_states[user_id] = {'mode': 'menu'}
                 else:
                     bot.send_message(
                         user_id,
