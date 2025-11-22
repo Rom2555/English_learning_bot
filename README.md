@@ -30,11 +30,10 @@ Telegram-бот для изучения английских слов.
    `bash git clone https://github.com/Rom2555/English_learning_bot.git cd English_learning_bot`
 2. Установите зависимости:
    `bash pip install -r requirements.txt`
-3. Создайте файл `.env` в корне проекта:
-   `env TOKEN=ваш_токен_от_BotFather DB_HOST=localhost DB_NAME=имя_вашей_базы_данных DB_USER=имя_пользователя_БД DB_PASS=пароль_БД DB_PORT=5432`
+3. Создайте файл `.env` в корне проекта по примеру файла `.env.example`
 4. Убедитесь, что у вас запущен PostgreSQL, и создайте базу данных:
    `sql CREATE DATABASE имя_вашей_базы_данных;`
-5. Положите файл `general_words.json` в корень.
+5. Замените файл `general_words.json` в корне проекта на свой, если вас не устраивает готовый.
 6. Запустите бота:
    `bash python main.py`
 
@@ -42,20 +41,25 @@ Telegram-бот для изучения английских слов.
 
 ## Структура проекта
 
-- main.py # Точка входа, запуск бота
-- handlers.py # Обработчики команд и сообщений
-- database.py # Работа с PostgreSQL
-- words.py # Управление словами
-- practice.py # Логика практики
-- keyboards.py # Клавиатуры Telegram
-- general_words.json # База общих слов
-- .env # Переменные окружения
-- requirements.txt # Зависимости
-- general_words.json # Файл с общими для всех пользователей словами
+- main.py - Точка входа, запуск бота
+- handlers.py - Обработчики команд и сообщений
+- database.py - Работа с PostgreSQL
+- words.py - Управление словами
+- practice.py - Логика практики
+- keyboards.py - Клавиатуры Telegram
+- general_words.json - База общих слов
+- .env - Переменные окружения
+- requirements.txt - Зависимости
 
 ## Формат `general_words.json`
 
-    json [ { "word": "кошка", "translation": "cat" }, { "word": "собака", "translation": "dog" }, { "word": "дом", "translation": "house" } ]
+```json
+[
+  { "word": "кошка", "translation": "cat" },
+  { "word": "собака", "translation": "dog" },
+  { "word": "дом", "translation": "house" }
+]
+```
 
 ---
 
@@ -63,9 +67,9 @@ Telegram-бот для изучения английских слов.
 
 1. Напишите боту `/start`
 2. Выберите одну из кнопок:
-    - **Добавить слово** → введите слово на русском, затем его перевод
-    - **Удалить слово** → введите слово на русском, чтобы удалить
-    - **Практика** → выберите правильный перевод из предложенных
+    - **Добавить слово** - введите слово на русском, затем его перевод
+    - **Удалить слово** - введите слово на русском, чтобы удалить
+    - **Практика** - выберите правильный перевод из предложенных
 
 ---
 
@@ -73,9 +77,9 @@ Telegram-бот для изучения английских слов.
 
 Бот использует PostgreSQL для хранения:
 
-- `general_words` — общие слова (из `general_words.json`)
-- `user_words` — слова, добавленные пользователями
-- `results` — результаты тренировок (для статистики)
+- `general_words` - общие слова (из `general_words.json`)
+- `user_words` - слова, добавленные пользователями
+- `results` - результаты тренировок (для статистики)
 
 Схема базы данных:
 
