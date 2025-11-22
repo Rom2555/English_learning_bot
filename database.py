@@ -1,4 +1,8 @@
-"""База данных english_bot_db2"""
+"""База данных english_bot_db2
+
+Модуль для работы с PostgreSQL-базой данных бота
+Создаёт таблицы, управляет подключением и загружает начальные данные
+"""
 
 import psycopg2
 import json
@@ -17,6 +21,7 @@ DB_PORT = int(os.getenv("DB_PORT", 5432))
 
 
 def get_connection():
+    """Создаёт и возвращает соединение с PostgreSQL базой данных"""
     return psycopg2.connect(
         host=DB_HOST,
         database=DB_NAME,
@@ -27,6 +32,19 @@ def get_connection():
 
 
 def init_db():
+    """Инициализирует структуру базы данных
+
+    Создаёт три таблицы, если они ещё не существуют:
+    - general_words: общие слова из JSON-файла
+    - user_words: слова, добавленные пользоваателем
+    - results: результаты практики пользователей
+
+    Также загружает начальные данные из файла `general_words.json`,
+    игнорируя дубликаты
+
+    Raises:
+        Exception: При ошибках выполнения SQL или чтения файла
+    """
     conn = None
     cur = None
     try:

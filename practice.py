@@ -1,9 +1,33 @@
+"""Модуль для работы с режимом практики
+
+Содержит функции:
+- Случайного выбора слова для тренировки
+- Генерации вариантов ответов (включая неверные)
+- Сохранения результатов ответов пользователя
+"""
+
 import random
 from words import get_all_words, get_general_words
 from database import get_connection
 
 
 def get_practice_data(user_id):
+    """Генерирует данные для одного сеанса практики
+
+    Выбирает случайное слово из словаря пользователя и общих слов,
+    создаёт 4 варианта ответа (1 правильный, 3 неправильных)
+
+    Args:
+        user_id (int): Telegram-ID пользователя
+
+    Returns:
+        tuple: (russian, correct, choices), где:
+            russian (str): слово на русском,
+            correct (str): правильный перевод,
+            choices (list of str): перемешанные варианты ответов
+    Примечание:
+        Если слов нет, возвращает (None, None, None)
+    """
     words = get_all_words(user_id)
     if not words:
         return None, None, None
@@ -24,6 +48,16 @@ def get_practice_data(user_id):
 
 
 def save_result(user_id, word, correct):
+    """Сохраняет результат одного ответа пользователя
+
+    Args:
+        user_id (int): Telegram-ID пользователя
+        word (str): Слово, по которому был дан ответ (на русском)
+        correct (bool): True - если ответ правильный, False - если нет
+
+    Примечание:
+        Данные сохраняются в таблицу `results` с отметкой даты-времени(для статистики)
+    """
     conn = get_connection()
     cur = conn.cursor()
     cur.execute(

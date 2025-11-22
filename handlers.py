@@ -1,13 +1,39 @@
+"""Модуль обработчиков сообщений для Telegram-бота
+
+Содержит функцию setup_handlers, которая регистрирует обработчики команд и текстовых сообщений
+Реализует логику взаимодействия с пользователем: добавление\удаление слов, режим практики
+"""
+
 from keyboards import get_main_menu, get_practice_keyboard, get_cancel_keyboard
 from practice import get_practice_data, save_result
 from words import get_user_words, delete_word, add_word, get_all_words
 
 
 def setup_handlers(bot):
+    """Настраивает обработчики команд и текстовых сообщений для бота
+
+    Args:
+        bot (telebot.TeleBot): Экземпляр бота, к которому привязываются обработчики
+
+    Обрабатывает:
+        - Команду /start
+        - Текстовые сообщения в зависимости от текущего состояния пользователя
+        - Действия: добавление, удаление слов, практика
+
+    Использует внутренний словарь user_states для отслеживания состояния каждого пользователя
+    """
+    # Словарь состояния пользователя
     user_states = {}
 
     @bot.message_handler(commands=['start'])
     def start(message):
+        """Обработчик команды /start
+
+        Приветствует пользователя и показывает главное меню
+
+        Args:
+            message: Входящее сообщение от пользователя
+        """
         user_states[message.chat.id] = {'mode': 'menu'}
         bot.send_message(
             message.chat.id,
@@ -25,6 +51,13 @@ def setup_handlers(bot):
 
     @bot.message_handler(content_types=['text'])
     def reply(message):
+        """Основной обработчик текстовых сообщений
+
+        Направляет логику в зависимости от текущего состояния пользователя
+
+        Args:
+            message: Входящее текстовое сообщение
+        """
         user_id = message.chat.id
         text = message.text.strip()
         state = user_states.get(user_id, {}).get('mode', 'menu')
