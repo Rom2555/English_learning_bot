@@ -1,9 +1,8 @@
-"""База данных english_bot_db2
-
+"""
 Модуль для работы с PostgreSQL-базой данных бота
 Создаёт таблицы, управляет подключением и загружает начальные данные
 """
-
+# база - english_bot_db2
 import psycopg2
 import json
 import os

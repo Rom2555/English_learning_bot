@@ -1,9 +1,8 @@
-"""English Learning Bot (NetologyFirst)
-
+"""
 Главный файл запуска бота. Содержит инициализацию бота, загрузку токена,
 настройку обработчиков и запуск polling-режима
 """
-
+# в ТГ - English_Learning_Bot
 import telebot
 import os
 from dotenv import load_dotenv
