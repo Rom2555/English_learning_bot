@@ -15,6 +15,7 @@ DB_USER = os.getenv("DB_USER")
 DB_PASS = os.getenv("DB_PASS")
 DB_PORT = int(os.getenv("DB_PORT", 5432))
 
+
 def get_connection():
     return psycopg2.connect(
         host=DB_HOST,
@@ -23,6 +24,7 @@ def get_connection():
         password=DB_PASS,
         port=DB_PORT
     )
+
 
 def init_db():
     conn = None
@@ -33,36 +35,38 @@ def init_db():
 
         # Таблица: общие слова
         cur.execute('''
-            CREATE TABLE IF NOT EXISTS general_words (
-                id SERIAL PRIMARY KEY,
-                word TEXT NOT NULL,
-                translation TEXT NOT NULL,
-                UNIQUE (word)
-            );
-        ''')
+                    CREATE TABLE IF NOT EXISTS general_words
+                    (
+                        id          SERIAL PRIMARY KEY,
+                        word        TEXT NOT NULL,
+                        translation TEXT NOT NULL,
+                        UNIQUE (word)
+                    );
+                    ''')
 
         # Таблица: пользовательские слова
         cur.execute('''
-            CREATE TABLE IF NOT EXISTS user_words (
-                id SERIAL PRIMARY KEY,
-                user_id BIGINT NOT NULL,
-                word TEXT NOT NULL,
-                translation TEXT NOT NULL,
-                UNIQUE (user_id, word)
-            );
-        ''')
+                    CREATE TABLE IF NOT EXISTS user_words
+                    (
+                        id          SERIAL PRIMARY KEY,
+                        user_id     BIGINT NOT NULL,
+                        word        TEXT   NOT NULL,
+                        translation TEXT   NOT NULL,
+                        UNIQUE (user_id, word)
+                    );
+                    ''')
 
         # Таблица: результаты
         cur.execute('''
-            CREATE TABLE IF NOT EXISTS results (
-                id SERIAL PRIMARY KEY,
-                user_id BIGINT NOT NULL,
-                word TEXT NOT NULL,
-                correct BOOLEAN NOT NULL,
-                date_time TIMESTAMP DEFAULT NOW()
-            );
-        ''')
-
+                    CREATE TABLE IF NOT EXISTS results
+                    (
+                        id        SERIAL PRIMARY KEY,
+                        user_id   BIGINT  NOT NULL,
+                        word      TEXT    NOT NULL,
+                        correct   BOOLEAN NOT NULL,
+                        date_time TIMESTAMP DEFAULT NOW()
+                    );
+                    ''')
 
         # Загружаем общие слова из JSON
         try:
@@ -87,7 +91,7 @@ def init_db():
 
     except Exception as e:
         if conn:
-            conn.rollback() # Откат транзакции, всё обнуляется
+            conn.rollback()  # Откат транзакции, всё обнуляется
         print(f"Ошибка при инициализации БД: {e}")
         raise
 

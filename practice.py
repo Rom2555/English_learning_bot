@@ -2,6 +2,7 @@ import random
 from words import get_all_words, get_general_words
 from database import get_connection
 
+
 def get_practice_data(user_id):
     words = get_all_words(user_id)
     if not words:
@@ -20,6 +21,7 @@ def get_practice_data(user_id):
     random.shuffle(choices)
 
     return russian, correct, choices
+
 
 def save_result(user_id, word, correct):
     conn = get_connection()
