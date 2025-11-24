@@ -33,8 +33,10 @@ def get_practice_data(user_id):
         return None, None, None
 
     russian, correct = random.choice(words)
+    # Получаем все возможные переводы из слов пользователя (уже включают общие слова)
+    # дублирование убрано!
     all_translations = [trans for _, trans in words]
-    all_translations += [pair[1] for pair in get_general_words()]
+
 
     # Убираем правильный перевод из общего списка, чтобы не было дубликатов при выборе
     wrong_choices = set([trans for trans in all_translations if trans != correct])
