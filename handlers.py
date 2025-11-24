@@ -227,7 +227,8 @@ def setup_handlers(bot):
                         bot.send_message(
                             user_id,
                             (
-                                f"Слово '{russian} - {text}' добавлено в ваш словарь!\n"
+                                f"Слово '{russian} - {text}' добавлено "
+                                f"в ваш словарь!\n"
                                 f"Сейчас вы изучаете {user_word_count} новых слов(а).\n"
                                 f"Всего вы изучаете {all_word_count} слов(а)."
                             ),
@@ -249,9 +250,7 @@ def setup_handlers(bot):
         elif state == "delete_word":
             if text == "Отмена":
                 try:
-                    bot.send_message(
-                        user_id, "Удаление отменено", reply_markup=get_main_menu()
-                    )
+                    bot.send_message(user_id, "Удаление отменено", reply_markup=get_main_menu())
                     user_states[user_id] = {"mode": "menu"}
                 except Exception as e:
                     logging.error(
@@ -267,16 +266,14 @@ def setup_handlers(bot):
                             f"Слово '{text}' удалено из вашего словаря.",
                             reply_markup=get_main_menu(),
                         )
+                        user_states[user_id] = {"mode": "menu"}
                     else:
                         bot.send_message(
                             user_id,
-                            (
-                                f"Слово '{text}' не найдено в вашем словаре. "
-                                "Попробуйте ещё раз или нажмите 'Отмена'"
-                            ),
+                            (f"Слово '{text}' не найдено в вашем словаре. "
+                             "Попробуйте ещё раз или нажмите 'Отмена'"),
                             reply_markup=get_cancel_keyboard(),
                         )
-                    user_states[user_id] = {"mode": "menu"}
                 except Exception as e:
                     logging.error(
                         f"Ошибка при удалении слова '{text}' у пользователя {user_id}: {e}"
