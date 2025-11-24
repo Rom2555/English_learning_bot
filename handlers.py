@@ -156,7 +156,8 @@ def setup_handlers(bot):
                     }
                 except Exception as e:
                     logging.error(
-                        f"Ошибка при подготовке практики для пользователя {user_id}: {e}"
+                        f"Ошибка при подготовке практики"
+                        f" для пользователя {user_id}: {e}"
                     )
                     bot.send_message(
                         user_id,
@@ -174,7 +175,8 @@ def setup_handlers(bot):
                     user_states[user_id] = {"mode": "menu"}
                 except Exception as e:
                     logging.error(
-                        f"Ошибка при отмене добавления слова для пользователя {user_id}: {e}"
+                        f"Ошибка при отмене добавления слова"
+                        f" для пользователя {user_id}: {e}"
                     )
             else:
                 user_states[user_id] = {"mode": "wait_english", "russian": text}
@@ -280,7 +282,8 @@ def setup_handlers(bot):
                         )
                 except Exception as e:
                     logging.error(
-                        f"Ошибка при удалении слова '{text}' у пользователя {user_id}: {e}"
+                        f"Ошибка при удалении слова '{text}'"
+                        f" у пользователя {user_id}: {e}"
                     )
                     bot.send_message(
                         user_id,
@@ -326,7 +329,8 @@ def setup_handlers(bot):
                     user_states[user_id] = {"mode": "menu"}
                 except Exception as e:
                     logging.error(
-                        f"Ошибка при обработке ответа на практике для пользователя {user_id}: {e}"
+                        f"Ошибка при обработке ответа на практике"
+                        f" для пользователя {user_id}: {e}"
                     )
                     bot.send_message(
                         user_id,
