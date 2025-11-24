@@ -5,6 +5,7 @@
 - Генерации вариантов ответов (включая неверные)
 - Сохранения результатов ответов пользователя
 """
+SPARE_WORDS = ["cat", "dog", "bird"] # запасные слова
 
 import random
 from words import get_all_words, get_general_words
@@ -50,7 +51,7 @@ def get_practice_data(user_id):
     # Выбираем 3 неправильных варианта
     if len(unique_wrong) < 3:
         # Если не хватает слов, дублируем. (лучше, чем ошибка)
-        choices = random.choices(unique_wrong, k=3) if unique_wrong else ["cat", "dog", "bird"]
+        choices = random.choices(unique_wrong, k=3) if unique_wrong else SPARE_WORDS
     else:
         choices = random.sample(unique_wrong, 3)
 
