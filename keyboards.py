@@ -30,7 +30,7 @@ def get_practice_keyboard(choices):
         choices (list): Список слов на английском (варианты ответа)
 
     Returns:
-        types.ReplyKeyboardMarkup: Клавиатура с вариантами ответов и кнопкой "Меню'
+        types.ReplyKeyboardMarkup: Клавиатура с вариантами ответов и кнопкой "Меню"
     """
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     markup.add(*[types.KeyboardButton(ans) for ans in choices])
