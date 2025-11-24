@@ -2,10 +2,12 @@
 Модуль для работы с PostgreSQL-базой данных бота
 Создаёт таблицы, управляет подключением и загружает начальные данные
 """
+
 # база - english_bot_db2
-import psycopg2
 import json
 import os
+
+import psycopg2
 from dotenv import load_dotenv
 
 # Загружаем переменные из .env
@@ -35,7 +37,7 @@ def init_db():
 
     Создаёт три таблицы, если они ещё не существуют:
     - general_words: общие слова из JSON-файла
-    - user_words: слова, добавленные пользоваателем
+    - user_words: слова, добавленные пользователем
     - results: результаты практики пользователей
 
     Также загружает начальные данные из файла `general_words.json`,
@@ -51,43 +53,40 @@ def init_db():
         cur = conn.cursor()
 
         # Таблица: общие слова
-        cur.execute('''
-                    CREATE TABLE IF NOT EXISTS general_words
-                    (
-                        id          SERIAL PRIMARY KEY,
-                        word        TEXT NOT NULL,
-                        translation TEXT NOT NULL,
-                        UNIQUE (word)
-                    );
-                    ''')
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS general_words (
+                id SERIAL PRIMARY KEY,
+                word TEXT NOT NULL,
+                translation TEXT NOT NULL,
+                UNIQUE (word)
+            );
+        """)
 
         # Таблица: пользовательские слова
-        cur.execute('''
-                    CREATE TABLE IF NOT EXISTS user_words
-                    (
-                        id          SERIAL PRIMARY KEY,
-                        user_id     BIGINT NOT NULL,
-                        word        TEXT   NOT NULL,
-                        translation TEXT   NOT NULL,
-                        UNIQUE (user_id, word)
-                    );
-                    ''')
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS user_words (
+                id SERIAL PRIMARY KEY,
+                user_id BIGINT NOT NULL,
+                word TEXT NOT NULL,
+                translation TEXT NOT NULL,
+                UNIQUE (user_id, word)
+            );
+        """)
 
         # Таблица: результаты
-        cur.execute('''
-                    CREATE TABLE IF NOT EXISTS results
-                    (
-                        id        SERIAL PRIMARY KEY,
-                        user_id   BIGINT  NOT NULL,
-                        word      TEXT    NOT NULL,
-                        correct   BOOLEAN NOT NULL,
-                        date_time TIMESTAMP DEFAULT NOW()
-                    );
-                    ''')
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS results (
+                id SERIAL PRIMARY KEY,
+                user_id BIGINT NOT NULL,
+                word TEXT NOT NULL,
+                correct BOOLEAN NOT NULL,
+                date_time TIMESTAMP DEFAULT NOW()
+            );
+        """)
 
         # Загружаем общие слова из JSON
         try:
-            with open('general_words.json', 'r', encoding='utf-8') as f:
+            with open("general_words.json", "r", encoding="utf-8") as f:
                 words_data = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Ошибка загрузки general_words.json: {e}")
@@ -99,8 +98,9 @@ def init_db():
             translation = item.get("translation")
             if word and translation:
                 cur.execute(
-                    "INSERT INTO general_words (word, translation) VALUES (%s, %s) ON CONFLICT (word) DO NOTHING",
-                    (word, translation)
+                    "INSERT INTO general_words (word, translation) "
+                    "VALUES (%s, %s) ON CONFLICT (word) DO NOTHING",
+                    (word, translation),
                 )
 
         conn.commit()
@@ -108,7 +108,7 @@ def init_db():
 
     except Exception as e:
         if conn:
-            conn.rollback()  # Откат транзакции, всё обнуляется
+            conn.rollback()
         print(f"Ошибка при инициализации БД: {e}")
         raise
 

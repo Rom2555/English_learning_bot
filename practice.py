@@ -5,11 +5,13 @@
 - Генерации вариантов ответов (включая неверные)
 - Сохранения результатов ответов пользователя
 """
-SPARE_WORDS = ["cat", "dog", "bird"] # запасные слова
 
 import random
-from words import get_all_words, get_general_words
+
 from database import get_connection
+from words import get_all_words, get_general_words
+
+SPARE_WORDS = ["cat", "dog", "bird"]  # запасные слова
 
 
 def get_practice_data(user_id):
@@ -41,8 +43,11 @@ def get_practice_data(user_id):
     # Убираем правильный перевод, чтобы не было его в списке неправильных
     wrong_translations = [trans for trans in all_translations if trans != correct]
 
-    # Добавим переводы из общих слов, которых нет в all_translations, чтобы избежать дублей
-    general_translations = [trans for _, trans in get_general_words() if trans not in all_translations]
+    # Добавим переводы из общих слов, которых нет в all_translations, чтобы
+    # избежать дублей
+    general_translations = [
+        trans for _, trans in get_general_words() if trans not in all_translations
+    ]
     all_wrong = wrong_translations + general_translations
 
     # Убираем дубликаты и перемешиваем
@@ -78,7 +83,7 @@ def save_result(user_id, word, correct):
     try:
         cur.execute(
             "INSERT INTO results (user_id, word, correct) VALUES (%s, %s, %s)",
-            (user_id, word, correct)
+            (user_id, word, correct),
         )
         conn.commit()
     finally:
