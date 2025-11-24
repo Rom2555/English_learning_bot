@@ -10,7 +10,7 @@ from database import get_connection
 
 
 def get_user_words(user_id):
-    """Получает список слов, добавленых пользователем
+    """Получает список слов, добавленных пользователем
 
     Args:
         user_id (int): Telegram-ID пользователя
@@ -75,12 +75,15 @@ def delete_word(user_id, word):
     """
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute(
-        "DELETE FROM user_words WHERE user_id = %s AND word = %s", (user_id, word)
-    )
-    conn.commit()
-    cur.close()
-    conn.close()
+    try:
+        cur.execute(
+            "DELETE FROM user_words WHERE user_id = %s AND word = %s",
+            (user_id, word),
+        )
+        conn.commit()
+    finally:
+        cur.close()
+        conn.close()
 
 
 def add_word(user_id, word, translation):
@@ -103,17 +106,18 @@ def add_word(user_id, word, translation):
     try:
         cur.execute(
             "SELECT 1 FROM user_words WHERE user_id = %s AND word = %s",
-            (user_id, word),  # Если слово есть то -> 1
+            (user_id, word),
         )
         if cur.fetchone() is None:
             cur.execute(
-                "INSERT INTO user_words (user_id, word, translation) VALUES (%s, %s, %s)",
+                "INSERT INTO user_words (user_id, word, translation) "
+                "VALUES (%s, %s, %s)",
                 (user_id, word, translation),
             )
             conn.commit()
             return True
         else:
-            return False  # Слово уже есть
+            return False
     finally:
         cur.close()
         conn.close()
