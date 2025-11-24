@@ -37,12 +37,24 @@ def get_practice_data(user_id):
     # дублирование убрано!
     all_translations = [trans for _, trans in words]
 
+    # Убираем правильный перевод, чтобы не было его в списке неправильных
+    wrong_translations = [trans for trans in all_translations if trans != correct]
 
-    # Убираем правильный перевод из общего списка, чтобы не было дубликатов при выборе
-    wrong_choices = set([trans for trans in all_translations if trans != correct])
+    # Добавим переводы из общих слов, которых нет в all_translations, чтобы избежать дублей
+    general_translations = [trans for _, trans in get_general_words() if trans not in all_translations]
+    all_wrong = wrong_translations + general_translations
 
-    # Выбираем 3 уникальных неправильных варианта
-    choices = random.sample(list(wrong_choices), 3)
+    # Убираем дубликаты и перемешиваем
+    unique_wrong = list(set(all_wrong))
+
+    # Выбираем 3 неправильных варианта
+    if len(unique_wrong) < 3:
+        # Если не хватает слов, дублируем. (лучше, чем ошибка)
+        choices = random.choices(unique_wrong, k=3) if unique_wrong else ["cat", "dog", "bird"]
+    else:
+        choices = random.sample(unique_wrong, 3)
+
+    # Добавляем правильный ответ и перемешиваем
     choices.append(correct)
     random.shuffle(choices)
 
