@@ -46,7 +46,9 @@ def get_practice_data(user_id):
     # Добавим переводы из общих слов, которых нет в all_translations, чтобы
     # избежать дублей
     general_translations = [
-        trans for _, trans in get_general_words() if trans not in all_translations
+        trans
+        for _, trans in get_general_words()
+        if trans not in all_translations
     ]
     all_wrong = wrong_translations + general_translations
 
@@ -76,7 +78,7 @@ def save_result(user_id, word, correct):
         correct (bool): True - если ответ правильный, False - если нет
 
     Примечание:
-        Данные сохраняются в таблицу `results` с отметкой даты-времени(для статистики)
+        Данные сохраняются в таблицу `results` с отметкой даты-времени (для статистики)
     """
     conn = get_connection()
     cur = conn.cursor()
