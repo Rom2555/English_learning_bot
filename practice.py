@@ -74,10 +74,12 @@ def save_result(user_id, word, correct):
     """
     conn = get_connection()
     cur = conn.cursor()
-    cur.execute(
-        "INSERT INTO results (user_id, word, correct) VALUES (%s, %s, %s)",
-        (user_id, word, correct)
-    )
-    conn.commit()
-    cur.close()
-    conn.close()
+    try:
+        cur.execute(
+            "INSERT INTO results (user_id, word, correct) VALUES (%s, %s, %s)",
+            (user_id, word, correct)
+        )
+        conn.commit()
+    finally:
+        cur.close()
+        conn.close()
