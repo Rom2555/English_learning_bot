@@ -250,7 +250,11 @@ def setup_handlers(bot):
         elif state == "delete_word":
             if text == "Отмена":
                 try:
-                    bot.send_message(user_id, "Удаление отменено", reply_markup=get_main_menu())
+                    bot.send_message(
+                        user_id,
+                        "Удаление отменено",
+                        reply_markup=get_main_menu()
+                    )
                     user_states[user_id] = {"mode": "menu"}
                 except Exception as e:
                     logging.error(
