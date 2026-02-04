@@ -23,7 +23,7 @@ def get_user_words(user_id):
     cur = conn.cursor()
     try:
         cur.execute(
-            "SELECT word, translation FROM user_words WHERE user_id = %s", (user_id,)
+            "SELECT word, translation FROM user_words WHERE user_id = ?", (user_id,)
         )
         return cur.fetchall()
     finally:
@@ -77,7 +77,7 @@ def delete_word(user_id, word):
     cur = conn.cursor()
     try:
         cur.execute(
-            "DELETE FROM user_words WHERE user_id = %s AND word = %s",
+            "DELETE FROM user_words WHERE user_id = ? AND word = ?",
             (user_id, word),
         )
         conn.commit()
@@ -105,13 +105,12 @@ def add_word(user_id, word, translation):
     cur = conn.cursor()
     try:
         cur.execute(
-            "SELECT 1 FROM user_words WHERE user_id = %s AND word = %s",
+            "SELECT 1 FROM user_words WHERE user_id = ? AND word = ?",
             (user_id, word),
         )
         if cur.fetchone() is None:
             cur.execute(
-                "INSERT INTO user_words (user_id, word, translation) "
-                "VALUES (%s, %s, %s)",
+                "INSERT INTO user_words (user_id, word, translation) VALUES (?, ?, ?)",
                 (user_id, word, translation),
             )
             conn.commit()

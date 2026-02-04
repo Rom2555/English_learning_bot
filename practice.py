@@ -84,8 +84,8 @@ def save_result(user_id, word, correct):
     cur = conn.cursor()
     try:
         cur.execute(
-            "INSERT INTO results (user_id, word, correct) VALUES (%s, %s, %s)",
-            (user_id, word, correct),
+            "INSERT INTO results (user_id, word, correct) VALUES (?, ?, ?)",
+            (user_id, word, 1 if correct else 0),
         )
         conn.commit()
     finally:
