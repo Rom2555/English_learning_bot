@@ -1,35 +1,19 @@
 """
-Модуль для работы с PostgreSQL-базой данных бота
+Модуль для работы с SQLite-базой данных бота
 Создаёт таблицы, управляет подключением и загружает начальные данные
 """
 
-# база - english_bot_db2
 import json
 import os
+import sqlite3
 
-import psycopg2
-from dotenv import load_dotenv
-
-# Загружаем переменные из .env
-load_dotenv()
-
-# Конфигурация БД
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASS = os.getenv("DB_PASS")
-DB_PORT = int(os.getenv("DB_PORT", 5432))
+# Путь к файлу базы данных
+DB_PATH = os.path.join(os.path.dirname(__file__), "english_bot.db")
 
 
 def get_connection():
-    """Создаёт и возвращает соединение с PostgreSQL базой данных"""
-    return psycopg2.connect(
-        host=DB_HOST,
-        database=DB_NAME,
-        user=DB_USER,
-        password=DB_PASS,
-        port=DB_PORT
-    )
+    """Создаёт и возвращает соединение с SQLite базой данных"""
+    return sqlite3.connect(DB_PATH)
 
 
 def init_db():
@@ -55,38 +39,38 @@ def init_db():
         # Таблица: общие слова
         cur.execute("""
             CREATE TABLE IF NOT EXISTS general_words (
-                id SERIAL PRIMARY KEY,
-                word TEXT NOT NULL,
-                translation TEXT NOT NULL,
-                UNIQUE (word)
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                word TEXT NOT NULL UNIQUE,
+                translation TEXT NOT NULL
             );
         """)
 
         # Таблица: пользовательские слова
         cur.execute("""
             CREATE TABLE IF NOT EXISTS user_words (
-                id SERIAL PRIMARY KEY,
-                user_id BIGINT NOT NULL,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
                 word TEXT NOT NULL,
                 translation TEXT NOT NULL,
-                UNIQUE (user_id, word)
+                UNIQUE(user_id, word)
             );
         """)
 
         # Таблица: результаты
         cur.execute("""
             CREATE TABLE IF NOT EXISTS results (
-                id SERIAL PRIMARY KEY,
-                user_id BIGINT NOT NULL,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL,
                 word TEXT NOT NULL,
-                correct BOOLEAN NOT NULL,
-                date_time TIMESTAMP DEFAULT NOW()
+                correct INTEGER NOT NULL,
+                date_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
         """)
 
         # Загружаем общие слова из JSON
         try:
-            with open("general_words.json", "r", encoding="utf-8") as f:
+            json_path = os.path.join(os.path.dirname(__file__), "general_words.json")
+            with open(json_path, "r", encoding="utf-8") as f:
                 words_data = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Ошибка загрузки general_words.json: {e}")
@@ -98,13 +82,12 @@ def init_db():
             translation = item.get("translation")
             if word and translation:
                 cur.execute(
-                    "INSERT INTO general_words (word, translation) "
-                    "VALUES (%s, %s) ON CONFLICT (word) DO NOTHING",
+                    "INSERT OR IGNORE INTO general_words (word, translation) VALUES (?, ?)",
                     (word, translation),
                 )
 
         conn.commit()
-        print("База данных ОК")
+        print("База данных ОК (SQLite)")
 
     except Exception as e:
         if conn:

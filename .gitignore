@@ -25,3 +25,13 @@ build/
 *.tmp
 *.swp
 *~
+
+# Безопасность - учетные данные
+deploy.py
+deploy_fixed.py
+*.db
+
+# Временные файлы и отчеты
+DATA_CHECK_REPORT.md
+*.bak
+*.backup
