@@ -93,12 +93,12 @@ def main():
                         break
 
     if not TELEGRAM_TOKEN:
-        print("Telegram Token не найден!")
-        print("Использование: python deploy.py <TOKEN>")
-        print("Или создайте .env файл с TOKEN=ваш_токен")
+        print("Telegram Token not found!")
+        print("Usage: python deploy.py <TOKEN>")
+        print("Or create .env file with TOKEN=your_token")
         return
 
-    print(f"Подключение к {HOST}...")
+    print(f"Connecting to {HOST}...")
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
@@ -119,13 +119,13 @@ def main():
         except:
             pass
 
-        # Upload files
-        print("\nЗагрузка файлов...")
+        # Upload files (skip venv to save time)
+        print("\nUploading files...")
         for item in os.listdir(LOCAL_DIR):
             local_item = os.path.join(LOCAL_DIR, item)
             remote_item = os.path.join(REMOTE_DIR, item)
-            # Skip .env file - we'll create it on server
-            if item == '.env':
+            # Skip .env and venv
+            if item in ['.env', 'venv', '__pycache__']:
                 continue
             if os.path.isfile(local_item):
                 print(f"  {item}")
@@ -140,33 +140,33 @@ def main():
         sftp.close()
 
         # Create .env file on server
-        print("\nСоздание .env файла...")
+        print("\nCreating .env file...")
         env_content = f"TOKEN={TELEGRAM_TOKEN}\n"
         stdin, stdout, stderr = ssh.exec_command(f"echo '{env_content}' > {REMOTE_DIR}/.env")
         time.sleep(1)
 
         # Install Docker Compose if needed
-        print("\nПроверка docker-compose...")
+        print("\nChecking docker-compose...")
         output, _ = run_command(ssh, "which docker-compose")
         if not output.strip():
-            print("Установка docker-compose...")
+            print("Installing docker-compose...")
             run_command(ssh, "apt update")
             run_command(ssh, "apt install -y docker-compose")
         else:
-            print("docker-compose уже установлен")
+            print("docker-compose already installed")
 
         # Build and run
-        print("\nСборка и запуск бота...")
+        print("\nBuilding and starting bot...")
         run_command(ssh, f"cd {REMOTE_DIR} && docker-compose down 2>/dev/null || true")
         run_command(ssh, f"cd {REMOTE_DIR} && docker-compose up -d --build", timeout=300)
 
         print("\n" + "="*50)
-        print("Готово! Бот запущен.")
-        print("Просмотр логов: docker-compose logs -f")
+        print("Done! Bot is running.")
+        print("View logs: docker-compose logs -f")
         print("="*50)
 
     except Exception as e:
-        print(f"Ошибка: {e}")
+        print(f"Error: {e}")
     finally:
         ssh.close()
 
